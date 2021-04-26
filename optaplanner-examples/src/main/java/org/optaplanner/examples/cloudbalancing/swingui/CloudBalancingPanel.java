@@ -137,7 +137,7 @@ public class CloudBalancingPanel extends SolutionPanel<CloudBalance> {
                 "CPU power (GHz):", cpuPowerField,
                 "Memory (GB):", memoryField,
                 "Network bandwidth (GB):", networkBandwidthField,
-                "Latency (ms):", latencyField
+                "Latency (hop):", latencyField
             };
             int option = JOptionPane.showConfirmDialog(null, message, "New Compute Host", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
             if (option == JOptionPane.OK_OPTION) {

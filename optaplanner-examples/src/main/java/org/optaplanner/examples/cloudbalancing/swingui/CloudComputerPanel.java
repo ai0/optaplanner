@@ -125,7 +125,7 @@ public class CloudComputerPanel extends JPanel {
         networkBandwidthField.setEditable(false);
         networkBandwidthField.setEnabled(false);
         add(networkBandwidthField);
-        costField = new JTextField(getComputerCost() + " ms");
+        costField = new JTextField(getComputerCost() + " hop(s)");
         costField.setEditable(false);
         costField.setEnabled(false);
         add(costField);
