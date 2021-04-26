@@ -82,7 +82,7 @@ public class CloudComputer extends AbstractPersistable implements Labeled {
 
     @Override
     public String getLabel() {
-        return "Computer " + id;
+        return "Compute Host " + id;
     }
 
 }

@@ -103,7 +103,8 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     public SolverAndPersistenceFrame(SolutionBusiness<Solution_, ?> solutionBusiness,
             SolutionPanel<Solution_> solutionPanel, CommonApp.ExtraAction<Solution_>[] extraActions) {
-        super(solutionBusiness.getAppName() + " OptaPlanner example");
+        super(solutionBusiness.getAppName());
+        this.setPreferredSize(new Dimension(1280,800));
         this.solutionBusiness = solutionBusiness;
         this.solutionPanel = solutionPanel;
         setIconImage(OPTA_PLANNER_ICON.getImage());
@@ -165,6 +166,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, quickOpenPanel, mainPanel);
         splitPane.setOneTouchExpandable(true);
         splitPane.setResizeWeight(0.2);
+        splitPane.setDividerLocation(0.0d);
         return splitPane;
     }
 
@@ -612,7 +614,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         descriptionPanel.add(new JScrollPane(descriptionTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         usageExplanationPanel.add(descriptionPanel, BorderLayout.SOUTH);
-        middlePanel.add(usageExplanationPanel, "usageExplanationPanel");
+        // middlePanel.add(usageExplanationPanel, "usageExplanationPanel");
         JComponent wrappedSolutionPanel;
         if (solutionPanel.isWrapInScrollPane()) {
             wrappedSolutionPanel = new JScrollPane(solutionPanel);

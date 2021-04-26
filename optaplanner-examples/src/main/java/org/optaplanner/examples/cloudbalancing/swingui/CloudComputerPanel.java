@@ -125,14 +125,14 @@ public class CloudComputerPanel extends JPanel {
         networkBandwidthField.setEditable(false);
         networkBandwidthField.setEnabled(false);
         add(networkBandwidthField);
-        costField = new JTextField(getComputerCost() + " $");
+        costField = new JTextField(getComputerCost() + " ms");
         costField.setEditable(false);
         costField.setEnabled(false);
         add(costField);
     }
 
     private void createBarsUI() {
-        numberOfProcessesLabel = new JLabel("    0 processes");
+        numberOfProcessesLabel = new JLabel("    0 VMs");
         numberOfProcessesLabel.setEnabled(false);
         numberOfProcessesLabel.setBorder(BorderFactory.createEmptyBorder(0, 37, 0, 0));
         add(numberOfProcessesLabel);
@@ -207,7 +207,7 @@ public class CloudComputerPanel extends JPanel {
     }
 
     private void updateBars(boolean used) {
-        numberOfProcessesLabel.setText(processList.size() + " processes");
+        numberOfProcessesLabel.setText(processList.size() + " VMs");
         numberOfProcessesLabel.setEnabled(used);
         cpuPowerBar.setEnabled(used);
         cpuPowerBar.repaint();

@@ -33,14 +33,18 @@ public class CloudBalancingApp extends CommonApp<CloudBalance> {
 
     public static void main(String[] args) {
         prepareSwingEnvironment();
-        new CloudBalancingApp().init();
+        CloudBalancingApp app = new CloudBalancingApp();
+        app.init();
+        app.solutionBusiness.setSolution(new CloudBalance());
+        app.solutionBusiness.setSolutionFileName("Untitled");
+        app.solverAndPersistenceFrame.setSolutionLoaded(null);
     }
 
     public CloudBalancingApp() {
-        super("Cloud balancing",
-                "Assign processes to computers.\n\n" +
-                        "Each computer must have enough hardware to run all of its processes.\n" +
-                        "Each used computer inflicts a maintenance cost.",
+        super("VM Placement",
+                "Assign VMs to cluster.\n\n" +
+                        "Each Compute Host must have enough hardware to run all of its VMs.\n" +
+                        "Each used Compute Host inflicts a latency.",
                 SOLVER_CONFIG, DATA_DIR_NAME,
                 CloudBalancingPanel.LOGO_PATH);
     }

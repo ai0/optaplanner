@@ -159,7 +159,7 @@ public class CloudBalancingGenerator extends LoggingMain {
     }
 
     private String determineFileName(int computerListSize, int processListSize) {
-        return computerListSize + "computers-" + processListSize + "processes";
+        return computerListSize + "Compute Hosts-" + processListSize + "VMs";
     }
 
     public CloudBalance createCloudBalance(String inputId, int computerListSize, int processListSize) {
@@ -171,7 +171,7 @@ public class CloudBalancingGenerator extends LoggingMain {
         assureComputerCapacityTotalAtLeastProcessRequiredTotal(cloudBalance);
         BigInteger possibleSolutionSize = BigInteger.valueOf(cloudBalance.getComputerList().size()).pow(
                 cloudBalance.getProcessList().size());
-        logger.info("CloudBalance {} has {} computers and {} processes with a search space of {}.",
+        logger.info("CloudBalance {} has {} Compute Hosts and {} VMs with a search space of {}.",
                 inputId, computerListSize, processListSize,
                 AbstractSolutionImporter.getFlooredPossibleSolutionSize(possibleSolutionSize));
         return cloudBalance;

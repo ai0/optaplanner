@@ -33,6 +33,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
 import org.optaplanner.examples.cloudbalancing.domain.CloudComputer;
@@ -125,24 +127,48 @@ public class CloudBalancingPanel extends SolutionPanel<CloudBalance> {
         JPanel headerPanel = new JPanel(new GridLayout(0, 5));
         JPanel addPanel = new JPanel(new GridLayout());
         JButton addComputerButton = SwingUtils.makeSmallButton(new JButton(addCloudComputerIcon));
-        addComputerButton.setToolTipText("Add computer");
+        addComputerButton.setToolTipText("Add Compute Host");
         addComputerButton.addActionListener(e -> {
-            CloudComputer computer = new CloudComputer();
-            computer.setCpuPower(12);
-            computer.setMemory(32);
-            computer.setNetworkBandwidth(12);
-            computer.setCost(400 + 400 + 600);
-            addComputer(computer);
+            JSpinner cpuPowerField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            JSpinner memoryField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            JSpinner networkBandwidthField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            JSpinner latencyField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            Object[] message = {
+                "CPU power (GHz):", cpuPowerField,
+                "Memory (GB):", memoryField,
+                "Network bandwidth (GB):", networkBandwidthField,
+                "Latency (ms):", latencyField
+            };
+            int option = JOptionPane.showConfirmDialog(null, message, "New Compute Host", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
+            if (option == JOptionPane.OK_OPTION) {
+                CloudComputer computer = new CloudComputer();
+                computer.setCpuPower((Integer) cpuPowerField.getValue());
+                computer.setMemory((Integer) memoryField.getValue());
+                computer.setNetworkBandwidth((Integer) networkBandwidthField.getValue());
+                computer.setCost((Integer) latencyField.getValue());
+                addComputer(computer);
+            }
         });
         addPanel.add(addComputerButton);
         JButton addProcessButton = SwingUtils.makeSmallButton(new JButton(addCloudProcessIcon));
-        addProcessButton.setToolTipText("Add process");
+        addProcessButton.setToolTipText("Add VM");
         addProcessButton.addActionListener(e -> {
-            CloudProcess process = new CloudProcess();
-            process.setRequiredCpuPower(3);
-            process.setRequiredMemory(8);
-            process.setRequiredNetworkBandwidth(3);
-            addProcess(process);
+            JSpinner requiredCpuPowerField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            JSpinner requiredMemoryField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            JSpinner requiredNetworkBandwidthField = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+            Object[] message = {
+                "Required CPU power (GHz):", requiredCpuPowerField,
+                "Required Memory (GB):", requiredMemoryField,
+                "Required Network bandwidth (GB):", requiredNetworkBandwidthField,
+            };
+            int option = JOptionPane.showConfirmDialog(null, message, "New VM", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
+            if (option == JOptionPane.OK_OPTION) {
+                CloudProcess process = new CloudProcess();
+                process.setRequiredCpuPower((Integer) requiredCpuPowerField.getValue());
+                process.setRequiredMemory((Integer) requiredMemoryField.getValue());
+                process.setRequiredNetworkBandwidth((Integer) requiredNetworkBandwidthField.getValue());
+                addProcess(process);
+            }
         });
         addPanel.add(addProcessButton);
         JPanel cornerPanel = new JPanel(new BorderLayout());
@@ -154,7 +180,7 @@ public class CloudBalancingPanel extends SolutionPanel<CloudBalance> {
         headerPanel.add(memoryLabel);
         JLabel networkBandwidthLabel = new JLabel("Network bandwidth");
         headerPanel.add(networkBandwidthLabel);
-        JLabel costLabel = new JLabel("Cost");
+        JLabel costLabel = new JLabel("Latency");
         headerPanel.add(costLabel);
         return headerPanel;
     }
@@ -226,22 +252,22 @@ public class CloudBalancingPanel extends SolutionPanel<CloudBalance> {
     }
 
     public void addComputer(final CloudComputer computer) {
-        logger.info("Scheduling addition of computer ({}).", computer);
+        logger.info("Scheduling addition of Compute Host ({}).", computer);
         doProblemFactChange(new AddComputerProblemFactChange(computer));
     }
 
     public void deleteComputer(final CloudComputer computer) {
-        logger.info("Scheduling delete of computer ({}).", computer);
+        logger.info("Scheduling delete of Compute Host ({}).", computer);
         doProblemFactChange(new DeleteComputerProblemFactChange(computer));
     }
 
     public void addProcess(final CloudProcess process) {
-        logger.info("Scheduling addition of process ({}).", process);
+        logger.info("Scheduling addition of VM ({}).", process);
         doProblemFactChange(new AddProcessProblemFactChange(process));
     }
 
     public void deleteProcess(final CloudProcess process) {
-        logger.info("Scheduling delete of process ({}).", process);
+        logger.info("Scheduling delete of VM ({}).", process);
         doProblemFactChange(new DeleteProcessProblemFactChange(process));
     }
 
@@ -261,7 +287,7 @@ public class CloudBalancingPanel extends SolutionPanel<CloudBalance> {
         @Override
         public void actionPerformed(ActionEvent e) {
             JPanel listFieldsPanel = new JPanel(new GridLayout(1, 2));
-            listFieldsPanel.add(new JLabel("Computer:"));
+            listFieldsPanel.add(new JLabel("Compute Host:"));
             List<CloudComputer> computerList = getSolution().getComputerList();
             // Add 1 to array size to add null, which makes the entity unassigned
             JComboBox computerListField = new JComboBox(

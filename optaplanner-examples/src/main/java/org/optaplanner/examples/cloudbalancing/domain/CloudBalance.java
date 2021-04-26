@@ -16,6 +16,7 @@
 
 package org.optaplanner.examples.cloudbalancing.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -42,6 +43,9 @@ public class CloudBalance extends AbstractPersistable {
     private HardSoftScore score;
 
     public CloudBalance() {
+        super(0);
+        this.computerList =new ArrayList<CloudComputer>();
+        this.processList = new ArrayList<CloudProcess>();
     }
 
     public CloudBalance(long id, List<CloudComputer> computerList, List<CloudProcess> processList) {

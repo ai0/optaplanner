@@ -88,7 +88,7 @@ public class CloudProcess extends AbstractPersistable {
     }
 
     public String getLabel() {
-        return "Process " + id;
+        return "VM " + id;
     }
 
 }
