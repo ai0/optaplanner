@@ -16,7 +16,20 @@
 
 package org.optaplanner.examples.cloudbalancing.app;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig;
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType;
+import org.optaplanner.core.config.phase.PhaseConfig;
+import org.optaplanner.core.config.score.director.ScoreDirectorFactoryConfig;
+import org.optaplanner.core.config.solver.SolverConfig;
+import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
+import org.optaplanner.examples.cloudbalancing.domain.CloudProcess;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalanceXmlSolutionFileIO;
 import org.optaplanner.examples.cloudbalancing.swingui.CloudBalancingPanel;
 import org.optaplanner.examples.common.app.CommonApp;
@@ -47,6 +60,39 @@ public class CloudBalancingApp extends CommonApp<CloudBalance> {
                         "Each used Compute Host inflicts a latency.",
                 SOLVER_CONFIG, DATA_DIR_NAME,
                 CloudBalancingPanel.LOGO_PATH);
+    }
+
+    @Override
+    protected SolverFactory<CloudBalance> createSolverFactory() {
+        return createSolverFactoryByApi();
+    }
+
+    protected SolverFactory<CloudBalance> createSolverFactoryByXml() {
+        return SolverFactory.createFromXmlResource(SOLVER_CONFIG);
+    }
+
+    protected SolverFactory<CloudBalance> createSolverFactoryByApi() {
+        if (this.optimizer != null) System.out.printf("Optimization Algorithm: %s\n", this.optimizer);
+
+        SolverConfig solverConfig = new SolverConfig();
+
+        solverConfig.setSolutionClass(CloudBalance.class);
+        solverConfig.setEntityClassList(Collections.singletonList(CloudProcess.class));
+
+        ScoreDirectorFactoryConfig scoreDirectorFactoryConfig = new ScoreDirectorFactoryConfig();
+        scoreDirectorFactoryConfig.setScoreDrlList(
+                Arrays.asList("org/optaplanner/examples/cloudbalancing/solver/cloudBalancingConstraints.drl"));
+        solverConfig.setScoreDirectorFactoryConfig(scoreDirectorFactoryConfig);
+
+        solverConfig.setTerminationConfig(new TerminationConfig().withMinutesSpentLimit(2L));
+        List<PhaseConfig> phaseConfigList = new ArrayList<>();
+
+        ConstructionHeuristicPhaseConfig constructionHeuristicPhaseConfig = new ConstructionHeuristicPhaseConfig();
+        constructionHeuristicPhaseConfig.setConstructionHeuristicType(this.optimizer);
+        phaseConfigList.add(constructionHeuristicPhaseConfig);
+
+        solverConfig.setPhaseConfigList(phaseConfigList);
+        return SolverFactory.create(solverConfig);
     }
 
     @Override

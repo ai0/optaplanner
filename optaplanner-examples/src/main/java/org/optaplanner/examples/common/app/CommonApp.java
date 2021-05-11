@@ -26,6 +26,7 @@ import javax.swing.WindowConstants;
 
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType;
 import org.optaplanner.core.impl.solver.DefaultSolverFactory;
 import org.optaplanner.examples.common.business.SolutionBusiness;
 import org.optaplanner.examples.common.persistence.AbstractSolutionExporter;
@@ -82,12 +83,18 @@ public abstract class CommonApp<Solution_> extends LoggingMain {
     protected SolverAndPersistenceFrame<Solution_> solverAndPersistenceFrame;
     protected SolutionBusiness<Solution_, ?> solutionBusiness;
 
+    protected ConstructionHeuristicType optimizer;
+
     protected CommonApp(String name, String description, String solverConfigResource, String dataDirName, String iconResource) {
         this.name = name;
         this.description = description;
         this.solverConfigResource = solverConfigResource;
         this.dataDirName = dataDirName;
         this.iconResource = iconResource;
+    }
+
+    public  void setOptimizer(ConstructionHeuristicType newOptimizer) {
+        this.optimizer = newOptimizer;
     }
 
     public String getName() {
@@ -134,6 +141,10 @@ public abstract class CommonApp<Solution_> extends LoggingMain {
         solutionBusiness.setExporters(createSolutionExporters());
         solutionBusiness.updateDataDirs();
         return solutionBusiness;
+    }
+
+    public SolverFactory<Solution_> buildSolverFactory() {
+        return createSolverFactory();
     }
 
     protected SolverFactory<Solution_> createSolverFactory() {

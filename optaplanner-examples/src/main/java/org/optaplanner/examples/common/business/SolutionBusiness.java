@@ -36,6 +36,7 @@ import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.api.solver.ProblemFactChange;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType;
 import org.optaplanner.core.impl.domain.entity.descriptor.EntityDescriptor;
 import org.optaplanner.core.impl.domain.solution.descriptor.SolutionDescriptor;
 import org.optaplanner.core.impl.domain.variable.descriptor.GenuineVariableDescriptor;
@@ -191,6 +192,19 @@ public class SolutionBusiness<Solution_, Score_ extends Score<Score_>> {
 
     public File getExportDataDir() {
         return exportDataDir;
+    }
+
+    public SolverFactory<Solution_> buildSolverFactory() {
+        return app.buildSolverFactory();
+    }
+
+    public void setOptimizer(ConstructionHeuristicType newOptimizer) {
+        this.app.setOptimizer(newOptimizer);
+    }
+
+    public void updateSolver(SolverFactory<Solution_> solverFactory) {
+        this.solver = solverFactory.buildSolver();
+        this.scoreManager = ScoreManager.create(solverFactory);
     }
 
     public void setSolver(SolverFactory<Solution_> solverFactory) {

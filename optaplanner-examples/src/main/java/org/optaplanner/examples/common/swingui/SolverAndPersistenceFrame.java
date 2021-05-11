@@ -40,6 +40,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -54,12 +55,15 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.score.Score;
+import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicType;
 import org.optaplanner.examples.common.app.CommonApp;
 import org.optaplanner.examples.common.business.SolutionBusiness;
 import org.optaplanner.examples.common.persistence.AbstractSolutionExporter;
@@ -101,6 +105,8 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
     private JTextField scoreField;
     private ShowConstraintMatchesDialogAction showConstraintMatchesDialogAction;
 
+    private int lastOptimizerIndex;
+
     public SolverAndPersistenceFrame(SolutionBusiness<Solution_, ?> solutionBusiness,
             SolutionPanel<Solution_> solutionPanel, CommonApp.ExtraAction<Solution_>[] extraActions) {
         super(solutionBusiness.getAppName());
@@ -128,6 +134,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         refreshScreenDuringSolvingFalseIcon = new ImageIcon(getClass().getResource("refreshScreenDuringSolvingFalseIcon.png"));
         registerListeners();
         constraintMatchesDialog = new ConstraintMatchesDialog(this, solutionBusiness);
+        lastOptimizerIndex = 0;
     }
 
     private void registerListeners() {
@@ -344,15 +351,45 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private class SolveAction extends AbstractAction {
 
+        private Object[] optimizers = {
+            ConstructionHeuristicType.FIRST_FIT,
+            ConstructionHeuristicType.FIRST_FIT_DECREASING,
+            ConstructionHeuristicType.WEAKEST_FIT,
+            ConstructionHeuristicType.WEAKEST_FIT_DECREASING,
+            ConstructionHeuristicType.STRONGEST_FIT,
+            ConstructionHeuristicType.FIRST_FIT_DECREASING,
+            ConstructionHeuristicType.CHEAPEST_INSERTION
+        };
+
         public SolveAction() {
             super("Solve", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            setSolvingState(true);
-            Solution_ problem = solutionBusiness.getSolution();
-            new SolveWorker(problem).execute();
+            Object[] optimizerLabels = {
+                "First Fit",
+                "First Fit Decreasing",
+                "Weakest Fit",
+                "Weakest Fit Decreasing",
+                "Strongest Fit",
+                "Strongest Fit Decreasing",
+                "Cheapest Insertion"
+            };
+            JComboBox optimizerList = new JComboBox(optimizerLabels);
+            optimizerList.setSelectedIndex(lastOptimizerIndex);
+            int option = JOptionPane.showConfirmDialog(null, optimizerList, "Select Algorithm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
+            if (option == JOptionPane.OK_OPTION) {
+                int optimizerIndex = optimizerList.getSelectedIndex();
+                solutionBusiness.setOptimizer((ConstructionHeuristicType) optimizers[optimizerIndex]);
+                SolverFactory<Solution_> solverFactory = solutionBusiness.buildSolverFactory();
+                solutionBusiness.updateSolver(solverFactory);
+
+                setSolvingState(true);
+                Solution_ problem = solutionBusiness.getSolution();
+                new SolveWorker(problem).execute();
+                lastOptimizerIndex = optimizerIndex;
+            }
         }
 
     }
